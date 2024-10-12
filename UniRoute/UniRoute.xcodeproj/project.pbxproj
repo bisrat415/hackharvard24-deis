@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		F075EF1A2CBA615300FFF8A4 /* GoogleMaps in Frameworks */ = {isa = PBXBuildFile; productRef = F075EF192CBA615300FFF8A4 /* GoogleMaps */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		16DB1D5A2CBA0AE500429D28 /* UniRoute.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = UniRoute.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -23,6 +27,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F075EF1A2CBA615300FFF8A4 /* GoogleMaps in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -65,6 +70,7 @@
 			);
 			name = UniRoute;
 			packageProductDependencies = (
+				F075EF192CBA615300FFF8A4 /* GoogleMaps */,
 			);
 			productName = UniRoute;
 			productReference = 16DB1D5A2CBA0AE500429D28 /* UniRoute.app */;
@@ -94,6 +100,9 @@
 			);
 			mainGroup = 16DB1D512CBA0AE500429D28;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				F075EF182CBA615300FFF8A4 /* XCRemoteSwiftPackageReference "ios-maps-sdk" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 16DB1D5B2CBA0AE500429D28 /* Products */;
 			projectDirPath = "";
@@ -339,6 +348,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		F075EF182CBA615300FFF8A4 /* XCRemoteSwiftPackageReference "ios-maps-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/googlemaps/ios-maps-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 9.1.1;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		F075EF192CBA615300FFF8A4 /* GoogleMaps */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F075EF182CBA615300FFF8A4 /* XCRemoteSwiftPackageReference "ios-maps-sdk" */;
+			productName = GoogleMaps;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 16DB1D522CBA0AE500429D28 /* Project object */;
 }

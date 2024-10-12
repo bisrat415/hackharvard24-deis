@@ -21,12 +21,16 @@ struct ContentView: View {
                     Label("Favorites", systemImage: "star.fill")
                 }
                 .tag(1)
-            
-            NearbyView()
-                .tabItem {
-                    Label("Nearby", systemImage: "location.circle")
-                }
-                .tag(2)
+            MapViewRepresentable()  // Add MapViewRepresentable to the tab
+                    .tabItem {
+                        Label("Nearby", systemImage: "location.circle")
+                    }
+                    .tag(2)
+//            NearbyView()
+//                .tabItem {
+//                    Label("Nearby", systemImage: "location.circle")
+//                }
+//                .tag(2)
 
             ProfileView()
                 .tabItem {
