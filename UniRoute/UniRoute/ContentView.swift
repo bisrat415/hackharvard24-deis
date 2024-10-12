@@ -27,10 +27,6 @@ struct ContentView: View {
     }
         
     var body: some View {
-        VStack {
-            SearchBarView()
-
-            Spacer()
             TabView {
                 HomeView()
                     .tabItem {
@@ -44,7 +40,7 @@ struct ContentView: View {
                     }
                     .tag(1)
                 
-                NearbyView()
+                SearchView()
                     .tabItem {
                         Label("Nearby", systemImage: "location.circle")
                     }
@@ -56,8 +52,6 @@ struct ContentView: View {
                     }
                     .tag(3)
             }
-        }
-        
     }
 }
 
