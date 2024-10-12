@@ -10,6 +10,7 @@ import SwiftData
 
 @main
 struct UniRouteApp: App {
+    @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     @State private var showLaunchScreen = true
     
     var sharedModelContainer: ModelContainer = {
