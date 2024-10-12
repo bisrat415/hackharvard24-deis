@@ -7,134 +7,101 @@
 import SwiftUI
 import MapKit
 
-struct IdentifiableMapItem: Identifiable {
+struct RouteStep: Identifiable {
     let id = UUID()
-    let mapItem: MKMapItem
+    let title: String
+    let details: String
+    let arrivalTime: String
+    let duration: Int 
+    let cost: Double
+}
+let hardcodedRoutes = [
+    RouteStep(title: "Usdan Student Center", details: "Brandeis University Shuttle", arrivalTime: "Arrives in 8 min", duration: 10, cost: 0.0),
+    RouteStep(title: "Hynes Convention Center Station", details: "Nubian", arrivalTime: "Arrives in 2 min", duration: 5, cost: 1.5),
+    RouteStep(title: "Massachusetts Ave", details: "Red Line", arrivalTime: "Arrives 15 mins", duration: 20, cost: 2.5)
+]
+
+extension Collection where Element == RouteStep {
+    var totalTime: Int {
+        self.reduce(0) { $0 + $1.duration }
+    }
+
+    var totalCost: Double {
+        self.reduce(0) { $0 + $1.cost }
+    }
 }
 
 struct SearchView: View {
     @ObservedObject var locationManager = LocationManager()
     @ObservedObject var completer = LocationCompleter()
-    @State private var places: [IdentifiableMapItem] = []
-    
+
     @State private var departure: String = ""
     @State private var destination: String = ""
-    
-    @State private var selectedDeparture: MKMapItem? = nil
-    @State private var selectedDestination: MKMapItem? = nil
-    @State private var routes: [MKRoute] = []
-    
+    @State private var showRoutes: Bool = false
+    @State private var activeField: String = ""
+
     var body: some View {
-        VStack {
-            HStack {
-                VStack(alignment: .leading) {
-                    TextField("Enter departure", text: $departure)
-                        .textFieldStyle(RoundedBorderTextFieldStyle())
-                        .onChange(of: departure) { newValue in
-                            completer.updateQueryFragment(newValue)
-                        }
-                    
-                    TextField("Enter destination", text: $destination)
-                        .textFieldStyle(RoundedBorderTextFieldStyle())
-                        .onChange(of: destination) { newValue in
-                            completer.updateQueryFragment(newValue)
-                        }
-                }
-                .padding()
-                
-                Button(action: {
-                    calculateRoute()
-                }) {
-                    Text("Go")
-                        .bold()
-                        .foregroundColor(.white)
-                        .padding()
-                        .background(Color.blue)
-                        .cornerRadius(8)
-                }
-            }
-            
-            // Display autocomplete results and allow selection
-            if routes.isEmpty {
-                List(completer.searchResults, id: \.self) { completion in
-                    Text(completion.title)
-                        .onTapGesture {
-                            selectLocation(completion: completion)
-                        }
-                }
-            }
-            
-            // Conditionally display the route details
-            if !routes.isEmpty {
-                List(routes, id: \.self) { route in
-                    Section(header: Text("Route Details")) {
-                        Text("Duration: \(route.expectedTravelTime / 60, specifier: "%.0f") minutes")
-                        Text("Distance: \(route.distance / 1000, specifier: "%.2f") km")
-                        ForEach(route.steps, id: \.self) { step in
-                            VStack(alignment: .leading) {
-                                Text(step.instructions)
-                                Text("Distance: \(step.distance, specifier: "%.0f") meters")
-                            }
-                        }
-                    }
-                }
-            }
-            
-            Map(coordinateRegion: $locationManager.region, showsUserLocation: true, annotationItems: places) { place in
-                MapMarker(coordinate: place.mapItem.placemark.coordinate, tint: .red)
-            }
-            .cornerRadius(10)
+        VStack(alignment: .leading, spacing: 20) {
+            TextField("Enter departure", text: $departure, onEditingChanged: { isEditing in
+                activeField = isEditing ? "departure" : ""
+            })
+            .textFieldStyle(RoundedBorderTextFieldStyle())
             .padding()
-        }
-        .onAppear {
-            locationManager.start()
-        }
-        .onDisappear {
-            locationManager.stop()
-        }
-    }
-    
-    func selectLocation(completion: MKLocalSearchCompletion) {
-        let searchRequest = MKLocalSearch.Request(completion: completion)
-        let search = MKLocalSearch(request: searchRequest)
-        search.start { (response, error) in
-            if let mapItems = response?.mapItems, let firstItem = mapItems.first {
-                DispatchQueue.main.async {
-                    if departure.isEmpty {
-                        selectedDeparture = firstItem
-                        departure = firstItem.name ?? "Unknown Location"
-                    } else {
-                        selectedDestination = firstItem
-                        destination = firstItem.name ?? "Unknown Location"
+            .onChange(of: departure) { newValue in
+                completer.updateQueryFragment(newValue)
+            }
+
+            TextField("Enter destination", text: $destination, onEditingChanged: { isEditing in
+                activeField = isEditing ? "destination" : ""
+            })
+            .textFieldStyle(RoundedBorderTextFieldStyle())
+            .padding()
+            .onChange(of: destination) { newValue in
+                completer.updateQueryFragment(newValue)
+            }
+
+            Button("Go") {
+                showRoutes = !departure.isEmpty && !destination.isEmpty
+            }
+            .foregroundColor(.white)
+            .padding()
+            .background(Color.blue)
+            .cornerRadius(8)
+            .padding(.horizontal)
+            
+            if showRoutes {
+                VStack(alignment: .leading) {
+                    Text("Total Time: \(hardcodedRoutes.totalTime) mins").bold()
+                    Text("Total Cost: $\(hardcodedRoutes.totalCost, specifier: "%.2f")").bold()
+                }
+                .padding(.bottom)
+                
+                List(hardcodedRoutes) { route in
+                    VStack(alignment: .leading) {
+                        Text(route.title).bold()
+                        Text(route.details)
+                        Text(route.arrivalTime)
+                        Text("Duration: \(route.duration) mins").padding(.top, 1)
+                        Text("Cost: $\(route.cost, specifier: "%.2f")").padding(.top, 1)
+                    }
+                }
+            }
+
+            // Display autocomplete results
+            if !activeField.isEmpty {
+                List(completer.searchResults, id: \.self) { result in
+                    Text(result.title).onTapGesture {
+                        if activeField == "departure" {
+                            departure = result.title
+                        } else if activeField == "destination" {
+                            destination = result.title
+                        }
+                        activeField = ""  // Clear active field
                     }
                 }
             }
         }
-    }
-    
-    func calculateRoute() {
-        guard let source = selectedDeparture, let destination = selectedDestination else {
-            print("Departure or destination not set")
-            return
-        }
-        
-        let request = MKDirections.Request()
-        request.source = MKMapItem(placemark: MKPlacemark(coordinate: source.placemark.coordinate))
-        request.destination = MKMapItem(placemark: MKPlacemark(coordinate: destination.placemark.coordinate))
-        request.transportType = .transit
-        request.requestsAlternateRoutes = true
-        
-        let directions = MKDirections(request: request)
-        directions.calculate { response, error in
-            if let response = response {
-                self.routes = response.routes
-                DispatchQueue.main.async {
-                    // Update UI in main thread if necessary
-                }
-            } else if let error = error {
-                print("Couldn't calculate route: \(error.localizedDescription)")
-            }
-        }
+        .padding()
     }
 }
 
@@ -146,25 +113,24 @@ struct SearchView_Previews: PreviewProvider {
 
 class LocationCompleter: NSObject, ObservableObject, MKLocalSearchCompleterDelegate {
     @Published var searchResults = [MKLocalSearchCompletion]()
-    private var completer: MKLocalSearchCompleter
-    
+    private var completer = MKLocalSearchCompleter()
+
     override init() {
-        completer = MKLocalSearchCompleter()
         super.init()
         completer.delegate = self
-        completer.resultTypes = .address 
+        completer.resultTypes = .address // Customize this as needed
     }
-    
+
     func updateQueryFragment(_ fragment: String) {
         completer.queryFragment = fragment
     }
-    
+
     func completerDidUpdateResults(_ completer: MKLocalSearchCompleter) {
         DispatchQueue.main.async {
             self.searchResults = completer.results
         }
     }
-    
+
     func completer(_ completer: MKLocalSearchCompleter, didFailWithError error: Error) {
         print("Error: \(error.localizedDescription)")
     }
