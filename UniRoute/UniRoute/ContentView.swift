@@ -8,36 +8,56 @@
 import SwiftUI
 
 struct ContentView: View {
-    var body: some View {
-        TabView {
-            HomeView()
-                .tabItem {
-                    Label("Home", systemImage: "house")
-                }
-                .tag(0)
 
-            FavoriteView()
-                .tabItem {
-                    Label("Favorites", systemImage: "star.fill")
-                }
-                .tag(1)
-            MapViewRepresentable()  // Add MapViewRepresentable to the tab
+  
+    init() {
+        let tabBarAppearance = UITabBarAppearance()
+        tabBarAppearance.backgroundColor = UIColor(hex: "#2EAF37")
+        
+        tabBarAppearance.stackedLayoutAppearance.normal.iconColor = .white
+        tabBarAppearance.stackedLayoutAppearance.normal.titleTextAttributes = [.foregroundColor: UIColor.white]
+        
+        tabBarAppearance.stackedLayoutAppearance.selected.iconColor = .yellow
+        tabBarAppearance.stackedLayoutAppearance.selected.titleTextAttributes = [.foregroundColor: UIColor.yellow]
+        
+        UITabBar.appearance().standardAppearance = tabBarAppearance
+        if #available(iOS 15.0, *) {
+            UITabBar.appearance().scrollEdgeAppearance = tabBarAppearance
+        }
+    }
+        
+    var body: some View {
+        VStack {
+            SearchBarView()
+
+            Spacer()
+            TabView {
+                HomeView()
+                    .tabItem {
+                        Label("Home", systemImage: "house")
+                    }
+                    .tag(0)
+
+                FavoriteView()
+                    .tabItem {
+                        Label("Favorites", systemImage: "star.fill")
+                    }
+                    .tag(1)
+                
+                NearbyView()
                     .tabItem {
                         Label("Nearby", systemImage: "location.circle")
                     }
                     .tag(2)
-//            NearbyView()
-//                .tabItem {
-//                    Label("Nearby", systemImage: "location.circle")
-//                }
-//                .tag(2)
 
-            ProfileView()
-                .tabItem {
-                    Label("Profile", systemImage: "person.fill")
-                }
-                .tag(3)
+                ProfileView()
+                    .tabItem {
+                        Label("Profile", systemImage: "person.fill")
+                    }
+                    .tag(3)
+            }
         }
+        
     }
 }
 
