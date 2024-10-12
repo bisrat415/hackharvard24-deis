@@ -9,37 +9,38 @@ import SwiftUI
 
 struct ContentView: View {
   
-  @State var searchText = ""
-  
     var body: some View {
-        NavigationView {
+        VStack {
             SearchBarView()
-        }
-        TabView {
-            HomeView()
-                .tabItem {
-                    Label("Home", systemImage: "house")
-                }
-                .tag(0)
 
-            FavoriteView()
-                .tabItem {
-                    Label("Favorites", systemImage: "star.fill")
-                }
-                .tag(1)
-            
-            NearbyView()
-                .tabItem {
-                    Label("Nearby", systemImage: "location.circle")
-                }
-                .tag(2)
+            Spacer()
+            TabView {
+                HomeView()
+                    .tabItem {
+                        Label("Home", systemImage: "house")
+                    }
+                    .tag(0)
 
-            ProfileView()
-                .tabItem {
-                    Label("Profile", systemImage: "person.fill")
-                }
-                .tag(3)
+                FavoriteView()
+                    .tabItem {
+                        Label("Favorites", systemImage: "star.fill")
+                    }
+                    .tag(1)
+                
+                NearbyView()
+                    .tabItem {
+                        Label("Nearby", systemImage: "location.circle")
+                    }
+                    .tag(2)
+
+                ProfileView()
+                    .tabItem {
+                        Label("Profile", systemImage: "person.fill")
+                    }
+                    .tag(3)
+            }
         }
+        
     }
 }
 
