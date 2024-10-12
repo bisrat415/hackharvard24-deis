@@ -8,35 +8,12 @@
 import SwiftUI
 import MapKit
 
-struct MapViewRepresentable: UIViewRepresentable {
-    @ObservedObject var locationManager: LocationManager
-    @Binding var region: MKCoordinateRegion
-
-    func makeUIView(context: Context) -> MKMapView {
-        let mapView = MKMapView()
-        mapView.setRegion(region, animated: true)
-        mapView.showsUserLocation = true
-        return mapView
-    }
-
-    func updateUIView(_ uiView: MKMapView, context: Context) {
-        uiView.setRegion(region, animated: true)
-    }
-}
-
 struct HomeView: View {
-    @StateObject var locationManager = LocationManager()
-    @State private var region = MKCoordinateRegion(
-        center: CLLocationCoordinate2D(latitude: 42.3601, longitude: -71.0589),
-        span: MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05)
-    )
 
     var body: some View {
         VStack {
             SearchBarView()
-            MapViewRepresentable(locationManager: locationManager, region: $region)
-                .edgesIgnoringSafeArea(.all)
-                .frame(height: 250)
+            MapView()
 
             VStack(alignment: .leading, spacing: 10) {
                 Text("Favorites")
