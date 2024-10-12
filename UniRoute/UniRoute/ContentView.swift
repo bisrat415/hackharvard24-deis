@@ -27,10 +27,6 @@ struct ContentView: View {
     }
         
     var body: some View {
-        VStack {
-            SearchBarView()
-
-            Spacer()
             TabView {
                 HomeView()
                     .tabItem {
@@ -56,8 +52,6 @@ struct ContentView: View {
                     }
                     .tag(3)
             }
-        }
-        
     }
 }
 
