@@ -1,0 +1,23 @@
+{
+  "images" : [
+    {
+      "filename" : "Shuttle Service Logo in Yellow Black Bold Style (1024 x 1024 px) (Your Story).png",
+      "idiom" : "iphone",
+      "scale" : "1x"
+    },
+    {
+      "filename" : "Shuttle Service Logo in Yellow Black Bold Style (1024 x 1024 px) (Your Story) 1.png",
+      "idiom" : "iphone",
+      "scale" : "2x"
+    },
+    {
+      "filename" : "Shuttle Service Logo in Yellow Black Bold Style (1024 x 1024 px) (Your Story) 2.png",
+      "idiom" : "iphone",
+      "scale" : "3x"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}
