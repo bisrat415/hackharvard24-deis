@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct ContentView: View {
+
+  
     init() {
         let tabBarAppearance = UITabBarAppearance()
         tabBarAppearance.backgroundColor = UIColor(hex: "#2EAF37")
@@ -25,31 +27,37 @@ struct ContentView: View {
     }
         
     var body: some View {
-        TabView {
-            HomeView()
-                .tabItem {
-                    Label("Home", systemImage: "house")
-                }
-                .tag(0)
+        VStack {
+            SearchBarView()
 
-            FavoriteView()
-                .tabItem {
-                    Label("Favorites", systemImage: "star.fill")
-                }
-                .tag(1)
-            
-            NearbyView()
-                .tabItem {
-                    Label("Nearby", systemImage: "location.circle")
-                }
-                .tag(2)
+            Spacer()
+            TabView {
+                HomeView()
+                    .tabItem {
+                        Label("Home", systemImage: "house")
+                    }
+                    .tag(0)
 
-            ProfileView()
-                .tabItem {
-                    Label("Profile", systemImage: "person.fill")
-                }
-                .tag(3)
+                FavoriteView()
+                    .tabItem {
+                        Label("Favorites", systemImage: "star.fill")
+                    }
+                    .tag(1)
+                
+                NearbyView()
+                    .tabItem {
+                        Label("Nearby", systemImage: "location.circle")
+                    }
+                    .tag(2)
+
+                ProfileView()
+                    .tabItem {
+                        Label("Profile", systemImage: "person.fill")
+                    }
+                    .tag(3)
+            }
         }
+        
     }
 }
 
