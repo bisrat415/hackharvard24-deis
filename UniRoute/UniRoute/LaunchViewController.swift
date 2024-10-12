@@ -3,7 +3,7 @@
 //  UniRoute
 //
 //  Created by Sherren Jie on 10/12/24.
-//
+// this is for launch screen when you open the app
 
 import UIKit
 
