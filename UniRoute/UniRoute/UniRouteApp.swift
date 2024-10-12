@@ -10,12 +10,12 @@ import SwiftData
 
 @main
 struct UniRouteApp: App {
+    @State private var showLaunchScreen = true
+    
     var sharedModelContainer: ModelContainer = {
-        let schema = Schema([
-            Item.self,
-        ])
+        let schema = Schema([Item.self])
         let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
-
+        
         do {
             return try ModelContainer(for: schema, configurations: [modelConfiguration])
         } catch {
@@ -25,8 +25,19 @@ struct UniRouteApp: App {
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            if showLaunchScreen {
+                LaunchScreenView()
+                    .onAppear {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
+                            withAnimation {
+                                showLaunchScreen = false
+                            }
+                        }
+                    }
+            } else {
+                ContentView()
+                    .modelContainer(sharedModelContainer)
+            }
         }
-        .modelContainer(sharedModelContainer)
     }
 }
