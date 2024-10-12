@@ -8,28 +8,7 @@
 import SwiftUI
 import MapKit
 
-//struct MapViewRepresentable: UIViewRepresentable {
-//    @ObservedObject var locationManager: LocationManager
-//    @Binding var region: MKCoordinateRegion
-//
-//    func makeUIView(context: Context) -> MKMapView {
-//        let mapView = MKMapView()
-//        mapView.setRegion(region, animated: true)
-//        mapView.showsUserLocation = true
-//        return mapView
-//    }
-//
-//    func updateUIView(_ uiView: MKMapView, context: Context) {
-//        uiView.setRegion(region, animated: true)
-//    }
-//}
-
 struct HomeView: View {
-//    @StateObject var locationManager = LocationManager()
-//    @State private var region = MKCoordinateRegion(
-//        center: CLLocationCoordinate2D(latitude: 42.3601, longitude: -71.0589),
-//        span: MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05)
-//    )
 
     var body: some View {
         VStack {
@@ -37,17 +16,69 @@ struct HomeView: View {
             MapView()
 
             VStack(alignment: .leading, spacing: 10) {
-                Text("Current location: Boston Downtown")
+                Text("Favorites")
                     .bold()
                 
-                HStack {
-                    Text("35 min")
-                    Spacer()
-                    Text("$2.17")
+                Button(action: {
+                    print("Home Button tapped")
+                }) {
+                    HStack {
+                        Image(systemName: "house.fill")
+                            .resizable()
+                            .frame(width: 24, height: 24)
+                        Text("Home")
+                            .font(.headline)
+                        Spacer()
+                        Image(systemName: "chevron.right")
+                            .resizable()
+                            .frame(width: 10, height: 16)
+                    }
+                    .padding()
+                    .background(Color.blue)
+                    .foregroundColor(.white)
+                    .cornerRadius(10)
                 }
                 
-                Text("Usdan Student Center")
-                Spacer()
+                Button(action: {
+                    print("University Button tapped")
+                }) {
+                    HStack {
+                        Image(systemName: "building.2.fill")
+                            .resizable()
+                            .frame(width: 24, height: 24)
+                        Text("University")
+                            .font(.headline)
+                        Spacer()
+                        Image(systemName: "chevron.right")
+                            .resizable()
+                            .frame(width: 10, height: 16)
+                    }
+                    .padding()
+                    .background(Color.blue)
+                    .foregroundColor(.white)
+                    .cornerRadius(10)
+                }
+                
+                Button(action: {
+                    print("Work Button tapped")
+                }) {
+                    HStack {
+                        Image(systemName: "briefcase.fill")
+                            .resizable()
+                            .frame(width: 24, height: 24)
+                        Text("Work")
+                            .font(.headline)
+                        Spacer()
+                        Image(systemName: "chevron.right")
+                            .resizable()
+                            .frame(width: 10, height: 16)
+                    }
+                    .padding()
+                    .background(Color.blue)
+                    .foregroundColor(.white)
+                    .cornerRadius(10)
+                }
+                
             }
             .padding()
             .background(Color.green.opacity(0.3))
@@ -59,5 +90,7 @@ struct HomeView: View {
         .navigationBarTitle("Route Details", displayMode: .inline)
     }
 }
+
+
     
 

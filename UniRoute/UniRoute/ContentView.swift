@@ -33,16 +33,16 @@ struct ContentView: View {
                         Label("Home", systemImage: "house")
                     }
                     .tag(0)
-
-                FavoriteView()
-                    .tabItem {
-                        Label("Favorites", systemImage: "star.fill")
-                    }
-                    .tag(1)
                 
                 SearchView()
                     .tabItem {
                         Label("Nearby", systemImage: "location.circle")
+                    }
+                    .tag(1)
+
+                FavoriteView()
+                    .tabItem {
+                        Label("Favorites", systemImage: "star.fill")
                     }
                     .tag(2)
 
