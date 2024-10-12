@@ -16,13 +16,14 @@ struct SearchView: View {
     @ObservedObject var locationManager = LocationManager()
     @ObservedObject var completer = LocationCompleter()
     @State private var places: [IdentifiableMapItem] = []
-
+    
     @State private var departure: String = ""
     @State private var destination: String = ""
     
     @State private var selectedDeparture: MKMapItem? = nil
     @State private var selectedDestination: MKMapItem? = nil
-
+    @State private var routes: [MKRoute] = []
+    
     var body: some View {
         VStack {
             HStack {
@@ -40,7 +41,7 @@ struct SearchView: View {
                         }
                 }
                 .padding()
-
+                
                 Button(action: {
                     calculateRoute()
                 }) {
@@ -53,14 +54,32 @@ struct SearchView: View {
                 }
             }
             
-            List(completer.searchResults, id: \.self) { completion in
-                Text(completion.title)
-                    .onTapGesture {
-                        // Handling selection
-                        searchMap(completion: completion)
-                    }
+            // Display autocomplete results and allow selection
+            if routes.isEmpty {
+                List(completer.searchResults, id: \.self) { completion in
+                    Text(completion.title)
+                        .onTapGesture {
+                            selectLocation(completion: completion)
+                        }
+                }
             }
-
+            
+            // Conditionally display the route details
+            if !routes.isEmpty {
+                List(routes, id: \.self) { route in
+                    Section(header: Text("Route Details")) {
+                        Text("Duration: \(route.expectedTravelTime / 60, specifier: "%.0f") minutes")
+                        Text("Distance: \(route.distance / 1000, specifier: "%.2f") km")
+                        ForEach(route.steps, id: \.self) { step in
+                            VStack(alignment: .leading) {
+                                Text(step.instructions)
+                                Text("Distance: \(step.distance, specifier: "%.0f") meters")
+                            }
+                        }
+                    }
+                }
+            }
+            
             Map(coordinateRegion: $locationManager.region, showsUserLocation: true, annotationItems: places) { place in
                 MapMarker(coordinate: place.mapItem.placemark.coordinate, tint: .red)
             }
@@ -74,50 +93,54 @@ struct SearchView: View {
             locationManager.stop()
         }
     }
-
-    func searchMap(completion: MKLocalSearchCompletion) {
+    
+    func selectLocation(completion: MKLocalSearchCompletion) {
         let searchRequest = MKLocalSearch.Request(completion: completion)
         let search = MKLocalSearch(request: searchRequest)
         search.start { (response, error) in
-            if let response = response {
-                let newPlaces = response.mapItems.map { IdentifiableMapItem(mapItem: $0) }
-                self.places = newPlaces
-                
-                // Store the first item as either the departure or destination
-                if departure.isEmpty {
-                    self.selectedDeparture = response.mapItems.first
-                } else {
-                    self.selectedDestination = response.mapItems.first
+            if let mapItems = response?.mapItems, let firstItem = mapItems.first {
+                DispatchQueue.main.async {
+                    if departure.isEmpty {
+                        selectedDeparture = firstItem
+                        departure = firstItem.name ?? "Unknown Location"
+                    } else {
+                        selectedDestination = firstItem
+                        destination = firstItem.name ?? "Unknown Location"
+                    }
                 }
-                
-                if let firstItem = response.mapItems.first {
-                    locationManager.region.center = firstItem.placemark.coordinate
-                }
-            } else if let error = error {
-                print("Error occurred: \(error.localizedDescription)")
             }
         }
     }
-
+    
     func calculateRoute() {
         guard let source = selectedDeparture, let destination = selectedDestination else {
             print("Departure or destination not set")
             return
         }
-
+        
         let request = MKDirections.Request()
-        request.source = source
-        request.destination = destination
-        request.transportType = .automobile
-
+        request.source = MKMapItem(placemark: MKPlacemark(coordinate: source.placemark.coordinate))
+        request.destination = MKMapItem(placemark: MKPlacemark(coordinate: destination.placemark.coordinate))
+        request.transportType = .transit
+        request.requestsAlternateRoutes = true
+        
         let directions = MKDirections(request: request)
-        directions.calculate { (response, error) in
-            if let route = response?.routes.first {
-                locationManager.region = MKCoordinateRegion(route.polyline.boundingMapRect)
+        directions.calculate { response, error in
+            if let response = response {
+                self.routes = response.routes
+                DispatchQueue.main.async {
+                    // Update UI in main thread if necessary
+                }
             } else if let error = error {
                 print("Couldn't calculate route: \(error.localizedDescription)")
             }
         }
+    }
+}
+
+struct SearchView_Previews: PreviewProvider {
+    static var previews: some View {
+        SearchView()
     }
 }
 
@@ -129,6 +152,7 @@ class LocationCompleter: NSObject, ObservableObject, MKLocalSearchCompleterDeleg
         completer = MKLocalSearchCompleter()
         super.init()
         completer.delegate = self
+        completer.resultTypes = .address 
     }
     
     func updateQueryFragment(_ fragment: String) {
@@ -136,17 +160,12 @@ class LocationCompleter: NSObject, ObservableObject, MKLocalSearchCompleterDeleg
     }
     
     func completerDidUpdateResults(_ completer: MKLocalSearchCompleter) {
-        searchResults = completer.results
+        DispatchQueue.main.async {
+            self.searchResults = completer.results
+        }
     }
     
     func completer(_ completer: MKLocalSearchCompleter, didFailWithError error: Error) {
         print("Error: \(error.localizedDescription)")
     }
 }
-
-struct SearchView_Previews: PreviewProvider {
-    static var previews: some View {
-        SearchView()
-    }
-}
-
