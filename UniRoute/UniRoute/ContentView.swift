@@ -8,7 +8,13 @@
 import SwiftUI
 
 struct ContentView: View {
+  
+  @State var searchText = ""
+  
     var body: some View {
+        NavigationView {
+            SearchBarView()
+        }
         TabView {
             HomeView()
                 .tabItem {
