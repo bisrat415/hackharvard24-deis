@@ -40,7 +40,7 @@ struct ContentView: View {
                     }
                     .tag(1)
                 
-                NearbyView()
+                SearchView()
                     .tabItem {
                         Label("Nearby", systemImage: "location.circle")
                     }

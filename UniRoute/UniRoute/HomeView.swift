@@ -4,38 +4,62 @@
 //
 //  Created by Sherren Jie on 10/12/24.
 //
+
 import SwiftUI
-import GoogleMaps
+import MapKit
 
 struct MapViewRepresentable: UIViewRepresentable {
     @ObservedObject var locationManager: LocationManager
+    @Binding var region: MKCoordinateRegion
 
-    func makeUIView(context: Context) -> GMSMapView {
-        let initialLocation = locationManager.lastLocation ?? CLLocationCoordinate2D(latitude: -33.8688, longitude: 151.2093)
-        let camera = GMSCameraPosition.camera(withLatitude: initialLocation.latitude, longitude: initialLocation.longitude, zoom: 15)
-        let mapView = GMSMapView(frame: CGRect.zero, camera: camera)
-        mapView.isMyLocationEnabled = true
+    func makeUIView(context: Context) -> MKMapView {
+        let mapView = MKMapView()
+        mapView.setRegion(region, animated: true)
+        mapView.showsUserLocation = true
         return mapView
     }
 
-    func updateUIView(_ uiView: GMSMapView, context: Context) {
-        if let location = locationManager.lastLocation {
-            let camera = GMSCameraPosition.camera(withLatitude: location.latitude, longitude: location.longitude, zoom: uiView.camera.zoom)
-            uiView.animate(to: camera)
-        }
+    func updateUIView(_ uiView: MKMapView, context: Context) {
+        uiView.setRegion(region, animated: true)
     }
 }
 
-
 struct HomeView: View {
     @StateObject var locationManager = LocationManager()
+    @State private var region = MKCoordinateRegion(
+        center: CLLocationCoordinate2D(latitude: 42.3601, longitude: -71.0589),
+        span: MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05)
+    )
 
     var body: some View {
         VStack {
             SearchBarView()
-            MapViewRepresentable(locationManager: locationManager)
+            MapViewRepresentable(locationManager: locationManager, region: $region)
                 .edgesIgnoringSafeArea(.all)
+                .frame(height: 300)
+
+            VStack(alignment: .leading, spacing: 10) {
+                Text("Current location: Boston Downtown")
+                    .bold()
+                
+                HStack {
+                    Text("35 min")
+                    Spacer()
+                    Text("$2.17")
+                }
+                
+                Text("Usdan Student Center")
+                Spacer()
+            }
+            .padding()
+            .background(Color.green.opacity(0.3))
+            .cornerRadius(10)
+            .padding()
+            
+            Spacer()
         }
+        .navigationBarTitle("Route Details", displayMode: .inline)
     }
 }
+    
 
