@@ -6,7 +6,7 @@
   - *Bisrat Kassie*
 
 # Demo/Run
-https://appetize.io/app/b_z4vsil5jft6v7noyrnqvm4tbli
+[https://appetize.io/app/b_z4vsil5jft6v7noyrnqvm4tbli](https://appetize.io/app/b_og3oq2kvx3xye7p35w2pssmoz4)
 
 # Blueprint
 https://www.canva.com/design/DAGTVDns-mo/HyhM3TruGldLyvIvWx68zQ/view?mode=prototype
