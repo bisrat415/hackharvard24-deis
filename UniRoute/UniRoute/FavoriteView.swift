@@ -1,69 +1,33 @@
-//
-//  FavoriteView.swift
-//  UniRoute
-//
-//  Created by Sherren Jie on 10/12/24.
-//
 import SwiftUI
 
-struct FavoritePlace: Codable, Identifiable {
+struct FavoritePlace: Identifiable {
     var id: UUID = UUID()
     var name: String
     var latitude: Double
     var longitude: Double
 }
 
-class FavoritesManager: ObservableObject {
-    @Published var places: [FavoritePlace] = []
-    private let favoritesKey = "favorites"
-
-    init() {
-        loadFavorites()
-    }
-
-    func addFavorite(_ place: FavoritePlace) {
-        places.append(place)
-        saveFavorites()
-    }
-
-    func removeFavorite(at offsets: IndexSet) {
-        places.remove(atOffsets: offsets)
-        saveFavorites()
-    }
-
-    private func saveFavorites() {
-        if let encoded = try? JSONEncoder().encode(places) {
-            UserDefaults.standard.set(encoded, forKey: favoritesKey)
-        }
-    }
-
-    private func loadFavorites() {
-        if let savedItems = UserDefaults.standard.data(forKey: favoritesKey),
-           let decodedItems = try? JSONDecoder().decode([FavoritePlace].self, from: savedItems) {
-            places = decodedItems
-        }
-    }
-}
 struct FavoriteView: View {
-    @StateObject var favoritesManager = FavoritesManager()
+    // Hardcoded array of 3 favorite places
+    let favoritePlaces: [FavoritePlace] = [
+        FavoritePlace(name: "Newbury St", latitude: 42.248817, longitude: -71.085428),
+        FavoritePlace(name: "Harvard University", latitude: 42.785091, longitude: -71.968285),
+        FavoritePlace(name: "Brandeis University", latitude: 41.689247, longitude: -73.044502),
+        FavoritePlace(name: "Boston Public Library", latitude: 42.248817, longitude: -71.085428),
+        FavoritePlace(name: "New England Aquarium", latitude: 41.62417, longitude: -71.64428),
+    ]
 
     var body: some View {
         NavigationView {
-            List {
-                ForEach(favoritesManager.places) { place in
-                    VStack(alignment: .leading) {
-                        Text(place.name)
-                            .font(.headline)
-                        Text("\(place.latitude), \(place.longitude)")
-                            .font(.subheadline)
-                    }
+            List(favoritePlaces) { place in
+                VStack(alignment: .leading) {
+                    Text(place.name)
+                        .font(.headline)
+                    Text("\(place.latitude), \(place.longitude)")
+                        .font(.subheadline)
                 }
-                .onDelete(perform: favoritesManager.removeFavorite)
             }
             .navigationTitle("Favorites")
-            .toolbar {
-                EditButton()
-            }
         }
     }
 }
@@ -73,4 +37,3 @@ struct FavoriteView_Previews: PreviewProvider {
         FavoriteView()
     }
 }
-
