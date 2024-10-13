@@ -8,7 +8,7 @@
 # Demo
 https://appetize.io/app/b_z4vsil5jft6v7noyrnqvm4tbli
 
-#Blueprint
+# Blueprint
 https://www.canva.com/design/DAGTVDns-mo/HyhM3TruGldLyvIvWx68zQ/view?mode=prototype
 
   
