@@ -5,6 +5,9 @@
   - *Kevin Cui*  
   - *Bisrat Kassie*
 
+# Demo
+https://appetize.io/app/b_z4vsil5jft6v7noyrnqvm4tbli
+
   
 ## About UniRoute 
 We all know that experience of having to use 2 seperate transportation apps(such as Tripshot/Google Maps) when we're heading out to the city. We also know the frustrations of when the School Shuttle arrives later than supposed to, delaying your train ride back home, or causing it to be too early. UniRoute is a unique platform designed to save the time and money of university students through an intuitive **Swift app** that utilizes **Apple MapKit API**.
